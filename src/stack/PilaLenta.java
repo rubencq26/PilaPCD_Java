@@ -4,11 +4,13 @@
  */
 package stack;
 
+import static java.lang.Thread.sleep;
+
 /**
  * @version 1.0
  * @author rubco
  */
-public class Pila implements IPila {
+public class PilaLenta implements IPila {
 
     private Object[] datos;
     private int cima;
@@ -20,7 +22,7 @@ public class Pila implements IPila {
      *
      * @param n
      */
-    public Pila(int n) {
+    public PilaLenta(int n) {
         cima = -1;
         capacidad = n;
         numelementos = 0;
@@ -45,10 +47,15 @@ public class Pila implements IPila {
      */
     @Override
     public void Apila(Object elemento) throws Exception {
+        sleep(100);
         if (!pilallena()) {
+            sleep(100);
             cima++;
+            sleep(100);
             datos[cima] = elemento;
+            sleep(100);
             numelementos++;
+            sleep(100);
         } else {
             throw new Exception("La pila esta llena");
         }
@@ -63,9 +70,12 @@ public class Pila implements IPila {
      */
     @Override
     public Object Desapila() throws Exception {
+        sleep(100);
         if (pilavacia()) {
+            sleep(100);
             throw new Exception("La pila esta vacia");
         }
+        sleep(100);
         numelementos--;
         return datos[cima--];
     }

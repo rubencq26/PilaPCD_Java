@@ -16,7 +16,7 @@ public class UsaPila {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Pila p = new Pila(10);
+        PilaLenta p = new PilaLenta(10);
         
         
         Random rd = new Random(System.nanoTime());
