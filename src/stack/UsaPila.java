@@ -18,22 +18,21 @@ public class UsaPila {
     public static void main(String[] args) {
         PilaLenta p = new PilaLenta(10);
         
+        Productor h1 = new Productor(p);
+        Productor h2 = new Productor(p);
         
-        Random rd = new Random(System.nanoTime());
-        int num = 0;
-        for (int i = 0; i < 10; i++) {
-            num = rd.nextInt(100);
-            try {
-                if (num % 2 == 0) {
-                    p.Apila(num);
-                } else {
-                    System.out.println(p.Desapila()); 
-                }
-            }catch(Exception e){
-                System.out.println("Error: " + e.getMessage() + "  " + num);
-            }
-
-        }
+        Consumidor r1 = new Consumidor(p);
+        Consumidor r2 = new Consumidor(p);
+        
+        Thread h3 = new Thread(r1);
+        Thread h4 = new Thread(r2);
+        
+        h1.start();
+        h2.start();
+        h3.start();
+        h4.start();
+        
+        
     }
 
 }
