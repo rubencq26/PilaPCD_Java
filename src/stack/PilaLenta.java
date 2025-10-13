@@ -5,6 +5,9 @@
 package stack;
 
 import static java.lang.Thread.sleep;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @version 1.0
@@ -46,16 +49,16 @@ public class PilaLenta implements IPila {
      * @throws java.lang.Exception
      */
     @Override
-    public void Apila(Object elemento) throws Exception {
-        sleep(100);
+    public synchronized void Apila(Object elemento) throws Exception {
+        
         if (!pilallena()) {
-            sleep(100);
+            
             cima++;
-            sleep(100);
+            
             datos[cima] = elemento;
-            sleep(100);
+            
             numelementos++;
-            sleep(100);
+            
         } else {
             throw new Exception("La pila esta llena");
         }
@@ -69,13 +72,13 @@ public class PilaLenta implements IPila {
      * @throws Exception
      */
     @Override
-    public Object Desapila() throws Exception {
-        sleep(100);
+    public synchronized Object Desapila() throws Exception {
+        
         if (pilavacia()) {
-            sleep(100);
+            
             throw new Exception("La pila esta vacia");
         }
-        sleep(100);
+        
         numelementos--;
         return datos[cima--];
     }
@@ -101,5 +104,13 @@ public class PilaLenta implements IPila {
     public boolean pilallena(){
         return numelementos == capacidad;
     }
+    
+    public synchronized List<Object> getDatos() {
+    List<Object> lista = new ArrayList<>();
+    for (int i = cima; i >= 0; i--) {
+        lista.add(datos[i]);
+    }
+    return lista;
+}
 
 }
