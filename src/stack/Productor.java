@@ -29,14 +29,14 @@ public class Productor extends Thread {
     @Override
     public void run(){
         int n;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 15; i++) {
             try{
                 n = r.nextInt(1,100);
                 p.Apila(n, id);
                 System.out.println("P" + id + ": "+ n);
                 canvas.setColorPilaVacia(Color.BLACK);
                 canvas.representa(p.getDatos());
-                sleep(500 + r.nextInt(1500));
+                sleep(1000 + r.nextInt(2000));
             }catch (InterruptedException e){
                 canvas.setColorPilaLlena(Color.RED);
                 canvas.repaint();
@@ -44,6 +44,10 @@ public class Productor extends Thread {
                 try { sleep(800); } catch(InterruptedException ex) {}
             }
             
+            if(Consumidor.getFinish()){
+                System.out.println("El productor " + id + " finaliza su ejecucion");
+                break;
+            }
         }
         
     }

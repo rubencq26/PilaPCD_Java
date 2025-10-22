@@ -22,6 +22,7 @@ public class PilaLenta implements IPila {
     private int capacidad;
     private int numelementos;
     private CanvasPila cv;
+
     /**
      * Constructor de la clase, se pasa por parámetro el tamaño máximo de pila
      *
@@ -52,26 +53,35 @@ public class PilaLenta implements IPila {
      * @throws java.lang.Exception
      */
     @Override
-    public synchronized void Apila(Object elemento, int id) throws InterruptedException{
+    public synchronized void Apila(Object elemento, int id) throws InterruptedException {
         boolean apilado = false;
-        
-        while(!apilado){
-            
-            if(pilallena()){
+        int contador = 0;
+        while (!apilado) {
+            if (Consumidor.getFinish()) {
+                notifyAll();
+                break;
+            }
+
+            if (pilallena()) {
                 cv.setColorPilaLlena(Color.RED);
-                System.out.println("Productor " + id + " se queda en espera" );
+                System.out.println("Productor " + id + " se queda en espera");
                 wait();
-            }else{
+            } else {
                 cv.setColorPilaVacia(Color.BLACK);
-                datos[++cima] = elemento; 
+                datos[++cima] = elemento;
                 numelementos++;
                 System.out.println("Productor " + id + " apila el elemento " + elemento);
                 apilado = true;
                 notifyAll();
             }
-            
+            contador++;
+            if (contador > 2) {
+                System.out.println("Productor " + id + " desiste y no apila el elemento " + elemento);
+                break;
+            }
+
         }
-        
+
     }
 
     /**
@@ -82,15 +92,15 @@ public class PilaLenta implements IPila {
      * @throws java.lang.InterruptedException
      */
     @Override
-    public synchronized Object Desapila() throws InterruptedException  {
+    public synchronized Object Desapila() throws InterruptedException {
         boolean desapilado = false;
         Object ele = 0;
-        while(!desapilado){
-            if(pilavacia()){
+        while (!desapilado) {
+            if (pilavacia()) {
                 cv.setColorPilaVacia(Color.RED);
                 System.out.println("El consumidor se queda en espera");
                 wait();
-            }else{
+            } else {
                 cv.setColorPilaVacia(Color.BLACK);
                 numelementos--;
                 ele = datos[cima--];
@@ -101,11 +111,12 @@ public class PilaLenta implements IPila {
         }
         return ele;
     }
-    
+
     /**
      * Devuelve el elemento mas alto de la pila sin sacarlo
+     *
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @Override
     public Object Primero() throws Exception {
@@ -114,22 +125,26 @@ public class PilaLenta implements IPila {
         }
         return datos[cima];
     }
-    
-    
-    public boolean pilavacia(){
+
+    public boolean pilavacia() {
         return cima == -1;
     }
-    
-    public boolean pilallena(){
+
+    public boolean pilallena() {
         return numelementos == capacidad;
     }
-    
+
     public synchronized List<Object> getDatos() {
-    List<Object> lista = new ArrayList<>();
-    for (int i = cima; i >= 0; i--) {
-        lista.add(datos[i]);
+        List<Object> lista = new ArrayList<>();
+        for (int i = cima; i >= 0; i--) {
+            lista.add(datos[i]);
+        }
+        return lista;
     }
-    return lista;
-}
+    
+    public synchronized void finalizarNotificar(){
+        Consumidor.setFinish(true);
+        notifyAll();
+    }
 
 }

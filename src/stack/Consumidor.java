@@ -17,22 +17,24 @@ public class Consumidor implements Runnable{
     
     private final PilaLenta p;
     private CanvasPila canvas;
+    private static boolean finish;
     public Consumidor(stack.PilaLenta p, CanvasPila canvas) {
         this.p = p;
         this.canvas = canvas;
+        finish = false;
     }
     
     @Override
     public void run(){
         Random r = new Random(System.nanoTime());
         Object n;
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 15; i++) {
             try {
                 n = p.Desapila();
                 System.out.println("D: " + n);
                 canvas.setColorPilaLlena(Color.BLACK);
                 canvas.representa(p.getDatos());
-                sleep(500 + r.nextInt(1500));
+                sleep(1000 + r.nextInt(2000));
             } catch(InterruptedException e){
                 canvas.setColorPilaVacia(Color.RED);
                 canvas.repaint();
@@ -41,6 +43,18 @@ public class Consumidor implements Runnable{
             }
 
         }
+        System.out.println("Consumidor finaliza su ejecucion");
+        p.finalizarNotificar();
+        
+    }
+    
+    public static boolean getFinish(){
+        
+        return finish;
+    }
+    
+    public static void setFinish(boolean f){
+        finish = f;
     }
 
 }
