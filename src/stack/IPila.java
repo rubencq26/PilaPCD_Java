@@ -10,7 +10,7 @@ package stack;
  */
 public interface IPila{
     public int GetNum();
-    public void Apila(Object e) throws Exception;
+    public void Apila(Object e, int id) throws Exception;
     public Object Desapila() throws Exception;
     public Object Primero() throws Exception;
     

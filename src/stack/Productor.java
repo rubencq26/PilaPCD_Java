@@ -18,24 +18,26 @@ public class Productor extends Thread {
     private final PilaLenta p;
     private final Random r;
     private final CanvasPila canvas;
-    public Productor(stack.PilaLenta p, CanvasPila canvas) {
+    private int id;
+    public Productor(stack.PilaLenta p, CanvasPila canvas, int id) {
         this.p = p;
         r =new Random(System.nanoTime());
         this.canvas = canvas;
+        this.id = id;
     }
     
     @Override
     public void run(){
         int n;
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             try{
                 n = r.nextInt(1,100);
-                p.Apila(n);
-                System.out.println("P: " + n);
+                p.Apila(n, id);
+                System.out.println("P" + id + ": "+ n);
                 canvas.setColorPilaVacia(Color.BLACK);
                 canvas.representa(p.getDatos());
                 sleep(500 + r.nextInt(1500));
-            }catch (Exception e){
+            }catch (InterruptedException e){
                 canvas.setColorPilaLlena(Color.RED);
                 canvas.repaint();
                 System.out.println("Error: " + e.getMessage());
@@ -45,4 +47,6 @@ public class Productor extends Thread {
         }
         
     }
+    
+    
 }

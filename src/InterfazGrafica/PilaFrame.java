@@ -52,31 +52,41 @@ public class PilaFrame extends java.awt.Frame {
         int alto = 600;
         int ancho = 600;
         int capacidad_pila = 8;
-        
+
         PilaFrame f = new PilaFrame();
-        
+
         f.setTitle("Pila lenta");
         f.setSize(ancho, alto);
         f.setVisible(true);
         f.setLocationRelativeTo(null);
-        
+
         CanvasPila cv = new CanvasPila(ancho, alto);
         f.add(cv);
-        PilaLenta pila = new PilaLenta(capacidad_pila);
-        
-        Productor p1 = new Productor(pila, cv);
+        PilaLenta pila = new PilaLenta(capacidad_pila, cv);
+
+        Productor p0 = new Productor(pila, cv, 0);
+        Productor p1 = new Productor(pila, cv, 1);
+        Productor p2 = new Productor(pila, cv, 2);
+        Productor p3 = new Productor(pila, cv, 3);
         Thread h1 = new Thread(new Consumidor(pila, cv));
-        
-        p1.start();
+
         h1.start();
+        p0.start();
+        p1.start();
+        p2.start();
+        p3.start();
         
-        try{
-            p1.join();
+        try {
             h1.join();
-        }catch(Exception e){
+            p0.join();
+            p1.join();
+            p2.join();
+            p3.join();
+            
+        } catch (InterruptedException e) {
             System.out.println("Error de join: " + e.getMessage());
         }
-        
+
         f.dispose();
     }
 

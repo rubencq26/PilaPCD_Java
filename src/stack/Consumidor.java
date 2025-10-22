@@ -26,14 +26,14 @@ public class Consumidor implements Runnable{
     public void run(){
         Random r = new Random(System.nanoTime());
         Object n;
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 40; i++) {
             try {
                 n = p.Desapila();
                 System.out.println("D: " + n);
                 canvas.setColorPilaLlena(Color.BLACK);
                 canvas.representa(p.getDatos());
                 sleep(500 + r.nextInt(1500));
-            } catch(Exception e){
+            } catch(InterruptedException e){
                 canvas.setColorPilaVacia(Color.RED);
                 canvas.repaint();
                 System.out.println("Error: " + e.getMessage());

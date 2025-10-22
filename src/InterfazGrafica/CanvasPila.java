@@ -64,11 +64,21 @@ public class CanvasPila extends Canvas {
         og.setFont(new Font("Arial", Font.BOLD, 16));
         og.setColor(Color.BLACK);
 
-        for (int i = 0; i < elementos.size(); i++) {
+        int n = elementos.size();
+        for (int i = 0; i < n; i++) {
             Object obj = elementos.get(i);
             if (obj != null) {
                 String valor = obj.toString();
-                int posY = pixelY - i * (altoRect + 10);
+                int indice = n - 1 - i;
+
+                int posY = pixelY - indice * (altoRect + 10);
+                og.setColor(Color.DARK_GRAY);
+                og.fillRect(pixelX, posY - altoRect, anchoRect, altoRect);
+                og.setColor(Color.BLACK);
+                og.drawRect(pixelX, posY - altoRect, anchoRect, altoRect);
+
+                // Dibujar el texto
+                og.setColor(Color.WHITE); // Texto en blanco para contraste
                 int textoAncho = og.getFontMetrics().stringWidth(valor);
                 int textoX = pixelX + (anchoRect - textoAncho) / 2;
                 int textoY = posY - (altoRect / 2) + 5;

@@ -4,6 +4,8 @@
  */
 package stack;
 
+import InterfazGrafica.CanvasPila;
+import java.awt.Color;
 import static java.lang.Thread.sleep;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,17 +21,18 @@ public class PilaLenta implements IPila {
     private int cima;
     private int capacidad;
     private int numelementos;
-
+    private CanvasPila cv;
     /**
      * Constructor de la clase, se pasa por parámetro el tamaño máximo de pila
      *
      * @param n
      */
-    public PilaLenta(int n) {
+    public PilaLenta(int n, CanvasPila cv) {
         cima = -1;
         capacidad = n;
         numelementos = 0;
         datos = new Object[capacidad];
+        this.cv = cv;
     }
 
     /**
@@ -49,19 +52,26 @@ public class PilaLenta implements IPila {
      * @throws java.lang.Exception
      */
     @Override
-    public synchronized void Apila(Object elemento) throws Exception {
+    public synchronized void Apila(Object elemento, int id) throws InterruptedException{
+        boolean apilado = false;
         
-        if (!pilallena()) {
+        while(!apilado){
             
-            cima++;
+            if(pilallena()){
+                cv.setColorPilaLlena(Color.RED);
+                System.out.println("Productor " + id + " se queda en espera" );
+                wait();
+            }else{
+                cv.setColorPilaVacia(Color.BLACK);
+                datos[++cima] = elemento; 
+                numelementos++;
+                System.out.println("Productor " + id + " apila el elemento " + elemento);
+                apilado = true;
+                notifyAll();
+            }
             
-            datos[cima] = elemento;
-            
-            numelementos++;
-            
-        } else {
-            throw new Exception("La pila esta llena");
         }
+        
     }
 
     /**
@@ -69,18 +79,27 @@ public class PilaLenta implements IPila {
      * Excepcion
      *
      * @return
-     * @throws Exception
+     * @throws java.lang.InterruptedException
      */
     @Override
-    public synchronized Object Desapila() throws Exception {
-        
-        if (pilavacia()) {
-            
-            throw new Exception("La pila esta vacia");
+    public synchronized Object Desapila() throws InterruptedException  {
+        boolean desapilado = false;
+        Object ele = 0;
+        while(!desapilado){
+            if(pilavacia()){
+                cv.setColorPilaVacia(Color.RED);
+                System.out.println("El consumidor se queda en espera");
+                wait();
+            }else{
+                cv.setColorPilaVacia(Color.BLACK);
+                numelementos--;
+                ele = datos[cima--];
+                System.out.println("El consumidor desapila " + ele);
+                desapilado = true;
+                notifyAll();
+            }
         }
-        
-        numelementos--;
-        return datos[cima--];
+        return ele;
     }
     
     /**
