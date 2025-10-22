@@ -35,11 +35,12 @@ public class Consumidor implements Runnable{
                 canvas.setColorPilaLlena(Color.BLACK);
                 canvas.representa(p.getDatos());
                 sleep(1000 + r.nextInt(2000));
-            } catch(InterruptedException e){
+            } catch(Exception e){
                 canvas.setColorPilaVacia(Color.RED);
                 canvas.repaint();
                 System.out.println("Error: " + e.getMessage());
-                try { sleep(800); } catch(InterruptedException ex) {}
+                p.finalizarNotificar();
+                break;
             }
 
         }

@@ -82,7 +82,7 @@ public class PilaFrame extends java.awt.Frame {
             p1.join();
             p2.join();
             p3.join();
-            
+            pila.finalizarNotificar();
         } catch (InterruptedException e) {
             System.out.println("Error de join: " + e.getMessage());
         }

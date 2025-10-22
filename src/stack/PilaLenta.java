@@ -53,35 +53,38 @@ public class PilaLenta implements IPila {
      * @throws java.lang.Exception
      */
     @Override
-    public synchronized void Apila(Object elemento, int id) throws InterruptedException {
-        boolean apilado = false;
+    public synchronized void Apila(Object elemento, int id) throws Exception {
         int contador = 0;
-        while (!apilado) {
-            if (Consumidor.getFinish()) {
-                notifyAll();
-                break;
-            }
+        
 
-            if (pilallena()) {
-                cv.setColorPilaLlena(Color.RED);
-                System.out.println("Productor " + id + " se queda en espera");
-                wait();
-            } else {
-                cv.setColorPilaVacia(Color.BLACK);
-                datos[++cima] = elemento;
-                numelementos++;
-                System.out.println("Productor " + id + " apila el elemento " + elemento);
-                apilado = true;
-                notifyAll();
-            }
-            contador++;
-            if (contador > 2) {
-                System.out.println("Productor " + id + " desiste y no apila el elemento " + elemento);
-                break;
-            }
-
+        while(pilallena() && contador < 3){
+            if(Consumidor.getFinish()){
+            break;
         }
-
+            System.out.println("El productor " + id + " se queda en espera");
+            cv.setColorPilaLlena(Color.RED);
+            wait();
+            contador++;
+            System.out.println("El productor " + id + " sale de la espera");
+        }
+        
+        if(!pilallena()){
+            
+            datos[++cima] = elemento;
+            
+            
+            
+            numelementos++;
+            cv.setColorPilaVacia(Color.BLACK);
+            if(pilallena()){
+                cv.setColorPilaLlena(Color.red);
+            }
+            System.out.println("El productor " + id + " apila " + elemento);
+            notifyAll();
+        }else{
+            cv.setColorPilaLlena(Color.RED);
+            throw new Exception("El productor " + id + " desiste y termina su ejecucion");
+        }
     }
 
     /**
@@ -92,24 +95,29 @@ public class PilaLenta implements IPila {
      * @throws java.lang.InterruptedException
      */
     @Override
-    public synchronized Object Desapila() throws InterruptedException {
-        boolean desapilado = false;
-        Object ele = 0;
-        while (!desapilado) {
-            if (pilavacia()) {
-                cv.setColorPilaVacia(Color.RED);
-                System.out.println("El consumidor se queda en espera");
-                wait();
-            } else {
-                cv.setColorPilaVacia(Color.BLACK);
-                numelementos--;
-                ele = datos[cima--];
-                System.out.println("El consumidor desapila " + ele);
-                desapilado = true;
-                notifyAll();
-            }
+    public synchronized Object Desapila() throws Exception {
+        int contador = 0;
+        
+        while(pilavacia() && contador < 3){
+            cv.setColorPilaVacia(Color.RED);
+            wait();
+            contador++;
         }
-        return ele;
+        
+        if(!pilavacia()){
+            
+            numelementos--;
+            
+            cv.setColorPilaLlena(Color.BLACK);
+            notifyAll();
+            return datos[cima--];
+            
+            
+        }else{
+            cv.setColorPilaVacia(Color.RED);
+            finalizarNotificar();
+            throw new Exception("El consumidor desiste y abandona la ejecucion");
+        }
     }
 
     /**
